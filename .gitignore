@@ -1,0 +1,9 @@
+*.class
+
+# Package Files
+*.jar
+
+# Eclipse Files
+.classpath
+.project
+.settings/
