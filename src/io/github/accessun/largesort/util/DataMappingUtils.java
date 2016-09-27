@@ -8,7 +8,17 @@ public class DataMappingUtils {
 
     private DataMappingUtils() {
     }
-    
+
+    /**
+     * Convert a string to a <tt>Record</tt> object. The string passed to this
+     * method should be a valid line of record in the original data file, or an
+     * exception will be thrown.
+     * 
+     * @param line
+     *            a line of record in the original data file
+     * @return
+     * @throws DataFormatException
+     */
     public static Record mapToRecord(String line) throws DataFormatException {
         DataValidator validator = new DataValidator();
         if (!validator.validateLine(line)) {
