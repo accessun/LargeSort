@@ -10,7 +10,7 @@ public class DataValidator {
 
     /**
      * Validate the file that contains data waiting to be sorted. This function
-     * should be called before the splitting and sorting operation the guarantee
+     * should be called before the splitting and sorting operation to guarantee
      * that the data in the file can be correctly operated on by this program.
      * 
      * This method reads in data from the file and validates them line by line.
