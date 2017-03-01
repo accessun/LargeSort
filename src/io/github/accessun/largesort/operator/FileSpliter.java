@@ -3,9 +3,11 @@ package io.github.accessun.largesort.operator;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import io.github.accessun.largesort.exception.DataFormatException;
 import io.github.accessun.largesort.model.Record;
@@ -27,7 +29,7 @@ public class FileSpliter {
      * You can change this by modifying the private static field
      * <tt>NUMBER_OF_SPLITS</tt> in this class. The default path to store the
      * split files is the same with that of the original data file.
-     * 
+     *
      * @param pathname
      *            the path of the original data file to be split
      * @return
@@ -43,7 +45,7 @@ public class FileSpliter {
      * of each line of data. Note that the default number of split file is 10.
      * You can change this by modifying the private static field
      * <tt>NUMBER_OF_SPLITS</tt> in this class.
-     * 
+     *
      * @param pathname
      *            the path of the original data file to be split
      * @param targetDir
@@ -54,30 +56,29 @@ public class FileSpliter {
      */
     public String split(String pathname, String targetDir) throws IOException, DataFormatException {
 
-        FileReader fr = new FileReader(new File(pathname));
-        BufferedReader reader = new BufferedReader(fr);
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(pathname))) {
 
-        BufferedWriter[] writerArr = new BufferedWriter[NUMBER_OF_SPLITS];
-        FileWriter fw;
-        BufferedWriter writer;
-        for (int i = 0; i < NUMBER_OF_SPLITS; i++) {
-            fw = new FileWriter(new File(targetDir + File.separator + getDestinationFile(i)));
-            writer = new BufferedWriter(fw);
-            writerArr[i] = writer;
-        }
+            BufferedWriter[] writerArr = new BufferedWriter[NUMBER_OF_SPLITS];
+            OpenOption[] options = { StandardOpenOption.WRITE, StandardOpenOption.CREATE };
 
-        Record record;
-        String line;
-        while ((line = reader.readLine()) != null) {
-            record = DataMappingUtils.mapToRecord(line);
-            writer = writerArr[getFileNumber(record)];
-            writer.write(line + "\n");
+            try {
+                for (int i = 0; i < NUMBER_OF_SPLITS; i++) {
+                    writerArr[i] = Files.newBufferedWriter(Paths.get(targetDir, File.separator, getDestinationFile(i)),
+                            options);
+                }
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    Record record = DataMappingUtils.mapToRecord(line);
+                    BufferedWriter writer = writerArr[getFileNumber(record)];
+                    writer.write(line + "\n");
+                }
+            } finally {
+                for (int i = 0; i < NUMBER_OF_SPLITS; i++) {
+                    if (writerArr[i] != null)
+                        writerArr[i].close();
+                }
+            }
         }
-
-        for (int i = 0; i < NUMBER_OF_SPLITS; i++) {
-            writerArr[i].close();
-        }
-        reader.close();
 
         return PREFIX_NAME;
     }
