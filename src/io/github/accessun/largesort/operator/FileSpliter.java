@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
@@ -37,7 +38,8 @@ public class FileSpliter {
      * @throws DataFormatException
      */
     public String split(String pathname) throws IOException, DataFormatException {
-        return split(pathname, new File(pathname).getParentFile() + "");
+        String targetDir = Paths.get(pathname).getParent().toString();
+        return split(pathname, targetDir + "");
     }
 
     /**
@@ -59,13 +61,20 @@ public class FileSpliter {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(pathname))) {
 
             BufferedWriter[] writerArr = new BufferedWriter[NUMBER_OF_SPLITS];
-            OpenOption[] options = { StandardOpenOption.WRITE, StandardOpenOption.CREATE };
+            OpenOption[] options = { StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW };
 
             try {
+                /*
+                 * Initialize writerArr. Each writer in this array corresponds
+                 * to a file associated with the index of the writer in the
+                 * array.
+                 */
                 for (int i = 0; i < NUMBER_OF_SPLITS; i++) {
-                    writerArr[i] = Files.newBufferedWriter(Paths.get(targetDir, File.separator, getDestinationFile(i)),
-                            options);
+                    Path path = Paths.get(targetDir, File.separator, getDestinationFile(i));
+                    writerArr[i] = Files.newBufferedWriter(path, options);
                 }
+
+
                 String line;
                 while ((line = reader.readLine()) != null) {
                     Record record = DataMappingUtils.mapToRecord(line);
@@ -83,8 +92,8 @@ public class FileSpliter {
         return PREFIX_NAME;
     }
 
-    private String getDestinationFile(int i) {
-        return new StringBuilder(PREFIX_NAME).append(i).append(".").append(EXTENSION_NAME) + "";
+    private String getDestinationFile(int index) {
+        return new StringBuilder(PREFIX_NAME).append(index).append(".").append(EXTENSION_NAME) + "";
     }
 
     private int getFileNumber(Record record) {

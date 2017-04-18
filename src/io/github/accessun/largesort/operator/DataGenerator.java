@@ -23,7 +23,7 @@ public class DataGenerator {
      */
     public void generateToFile(String pathname, int dataAmount) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(pathname), StandardOpenOption.WRITE,
-                StandardOpenOption.CREATE)) {
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             for (int i = 0; i < dataAmount; i++) {
                 writer.write(getLineRecord());
             }
