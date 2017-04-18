@@ -43,7 +43,7 @@ public class FileSpliter {
     }
 
     /**
-     * Split the original data file into multiple parts based on the hash value
+     * Split the original data file into multiple files based on the hash value
      * of each line of data. Note that the default number of split file is 10.
      * You can change this by modifying the private static field
      * <tt>NUMBER_OF_SPLITS</tt> in this class.
@@ -60,7 +60,13 @@ public class FileSpliter {
 
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(pathname))) {
 
+            /*
+             * Since the number of the files is determined by a variable, we
+             * cannot use try-with-resources statement. Manual resource
+             * clean-ups are unavoidable.
+             */
             BufferedWriter[] writerArr = new BufferedWriter[NUMBER_OF_SPLITS];
+
             OpenOption[] options = { StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW };
 
             try {
@@ -74,14 +80,14 @@ public class FileSpliter {
                     writerArr[i] = Files.newBufferedWriter(path, options);
                 }
 
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    Record record = DataMappingUtils.mapToRecord(line);
+                for (String line = null; (line = reader.readLine()) != null;) {
+                    Record record = DataMappingUtils.mapToRecord(line); // validation is enabled
                     BufferedWriter writer = writerArr[getFileNumber(record)];
                     writer.write(line + "\n");
                 }
+
             } finally {
+                // manually close all the writers
                 for (int i = 0; i < NUMBER_OF_SPLITS; i++) {
                     if (writerArr[i] != null)
                         writerArr[i].close();
