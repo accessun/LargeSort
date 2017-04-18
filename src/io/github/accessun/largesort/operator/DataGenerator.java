@@ -25,12 +25,10 @@ public class DataGenerator {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(pathname), StandardOpenOption.WRITE,
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             for (int i = 0; i < dataAmount; i++) {
-                writer.write(getLineRecord());
+                Record record = new Record(RandomUtils.getRandomName(), RandomUtils.getRandomAge());
+                writer.write(record.toString() + "\n");
             }
         }
     }
 
-    private String getLineRecord() {
-        return new Record(RandomUtils.getRandomName(), RandomUtils.getRandomAge()) + "";
-    }
 }

@@ -32,7 +32,7 @@ public class Record implements Comparable<Record> {
 
     @Override
     public String toString() {
-        return name + "\t" + age + "\n";
+        return name + "\t" + age;
     }
 
     @Override
