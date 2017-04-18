@@ -16,13 +16,10 @@ import io.github.accessun.largesort.util.DataMappingUtils;
 
 public class FileSpliter {
 
-    private static final int NUMBER_OF_SPLITS = 10;
-    private static final String EXTENSION_NAME = "txt";
-    private static final String PREFIX_NAME;
-
-    static {
-        PREFIX_NAME = "F_SPLIT-" + System.currentTimeMillis() + "-";
-    }
+    private int splits = 10;
+    private String extension = "txt";
+    private String prefix = "F_SPLIT-";
+    private String timestamp = System.currentTimeMillis() + "";
 
     /**
      * Split the original data file into multiple parts based on the hash value
@@ -37,9 +34,9 @@ public class FileSpliter {
      * @throws IOException
      * @throws DataFormatException
      */
-    public String split(String pathname) throws IOException, DataFormatException {
+    public void split(String pathname) throws IOException, DataFormatException {
         String targetDir = Paths.get(pathname).getParent().toString();
-        return split(pathname, targetDir + "");
+        split(pathname, targetDir + "");
     }
 
     /**
@@ -56,7 +53,7 @@ public class FileSpliter {
      * @throws IOException
      * @throws DataFormatException
      */
-    public String split(String pathname, String targetDir) throws IOException, DataFormatException {
+    public void split(String pathname, String targetDir) throws IOException, DataFormatException {
 
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(pathname))) {
 
@@ -65,7 +62,7 @@ public class FileSpliter {
              * cannot use try-with-resources statement. Manual resource
              * clean-ups are unavoidable.
              */
-            BufferedWriter[] writerArr = new BufferedWriter[NUMBER_OF_SPLITS];
+            BufferedWriter[] writerArr = new BufferedWriter[splits];
 
             OpenOption[] options = { StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW };
 
@@ -75,7 +72,7 @@ public class FileSpliter {
                  * to a file associated with the index of the writer in the
                  * array.
                  */
-                for (int i = 0; i < NUMBER_OF_SPLITS; i++) {
+                for (int i = 0; i < splits; i++) {
                     Path path = Paths.get(targetDir, File.separator, getDestinationFile(i));
                     writerArr[i] = Files.newBufferedWriter(path, options);
                 }
@@ -88,22 +85,54 @@ public class FileSpliter {
 
             } finally {
                 // manually close all the writers
-                for (int i = 0; i < NUMBER_OF_SPLITS; i++) {
+                for (int i = 0; i < splits; i++) {
                     if (writerArr[i] != null)
                         writerArr[i].close();
                 }
             }
         }
 
-        return PREFIX_NAME;
     }
 
     private String getDestinationFile(int index) {
-        return new StringBuilder(PREFIX_NAME).append(index).append(".").append(EXTENSION_NAME) + "";
+        return new StringBuilder(getPrefix()).append(index).append(".").append(extension) + "";
     }
 
     private int getFileNumber(Record record) {
-        return (record.hashCode() & 0x7fffffff) % NUMBER_OF_SPLITS;
+        return (record.hashCode() & 0x7fffffff) % splits;
+    }
+
+
+    public int getSplits() {
+        return splits;
+    }
+
+    public void setSplits(int splits) {
+        this.splits = splits;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
+
+    public String getPrefix() {
+        return prefix + timestamp + "-";
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
 }
