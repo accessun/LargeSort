@@ -3,7 +3,7 @@ package io.github.accessun.largesort.model;
 public class MetaInfo {
     private int dataAmount; // mandatory
     private String baseDir; // mandatory
-    private String dataFileName; // mandatory
+    private String dataFileName; // mandatory, file that contains all the data
     private String splitPrefix;
     private String mergeFileName = "F_MERGED.txt";
     private String timestamp; // mandatory after file split operation

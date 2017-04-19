@@ -1,51 +1,43 @@
 package io.github.accessun.largesort.test;
 
-import java.io.IOException;
-
 import org.junit.Test;
 
-import io.github.accessun.largesort.comparator.AgeComparator;
-import io.github.accessun.largesort.exception.DataFormatException;
+import io.github.accessun.largesort.handler.DataGeneratorHandler;
+import io.github.accessun.largesort.handler.FileSpliterHandler;
+import io.github.accessun.largesort.handler.LargeSortHandler;
 import io.github.accessun.largesort.model.MetaInfo;
-import io.github.accessun.largesort.operator.DataGenerator;
-import io.github.accessun.largesort.operator.DataSorter;
-import io.github.accessun.largesort.operator.FileMerger;
-import io.github.accessun.largesort.operator.FileSpliter;
 
 public class OperatorTest {
 
-    DataGenerator generator = new DataGenerator();
-    FileSpliter spliter = new FileSpliter();
-    DataSorter sorter = new DataSorter();
-    FileMerger merger = new FileMerger();
-
-    String baseDir = "C:/Users/User/Desktop/largeSort/";
-    String sortFile = baseDir + "F_SPLIT-1473654232865-0.txt";
-    String sortFile2 = baseDir + "F_SPLIT-1473654232865-1.txt";
-    String mergeFile = baseDir + "F_MERGED.txt";
-
     private MetaInfo info;
 
-    {
-        int dataAmount = 30;
-        String baseDir = "C:/Users/User/Desktop/largeSort/";
-        String dataFileName = "data.txt";
+    public OperatorTest() {
+        int dataAmount = 30; // how many lines of data the file is intended to hold
+        MetaInfoInitializer initializer = MetaInfoInitializer.getInstance();
+        info = initializer.init(dataAmount);
+    }
 
-        info = new MetaInfo(dataAmount, baseDir, dataFileName);
+    @Test
+    public void testGenerator() {
+        LargeSortHandler handler = new DataGeneratorHandler();
+        handler.handle(info);
+    }
+
+    @Test
+    public void testSpliter() {
+        LargeSortHandler handler = new DataGeneratorHandler();
+        LargeSortHandler spliterHandler = new FileSpliterHandler();
+        handler.setSuccessor(spliterHandler);
+
+        handler.handle(info);
     }
 
     /*
-    @Test
-    public void testGenerateToFile() throws IOException {
-        generator.generateToFile(initialFile, dataAmount);
-    }
-
     @Test
     public void testSplitString() throws IOException, DataFormatException {
         String prefix = spliter.split(initialFile);
         System.out.println("File Prefix: " + prefix);
     }
-    */
 
     @Test
     public void testSort() throws IOException, DataFormatException {
@@ -66,5 +58,5 @@ public class OperatorTest {
         }
         merger.mergeReduce(filePaths);
     }
-
+    */
 }
