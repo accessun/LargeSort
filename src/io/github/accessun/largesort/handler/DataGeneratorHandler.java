@@ -18,7 +18,7 @@ public class DataGeneratorHandler extends AbstractLargeSortHandler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return info;
+        return forward(info);
     }
 
 }

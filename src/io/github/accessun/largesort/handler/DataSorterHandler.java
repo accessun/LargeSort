@@ -34,7 +34,7 @@ public class DataSorterHandler extends AbstractLargeSortHandler {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return info;
+        return forward(info);
     }
 
 }
