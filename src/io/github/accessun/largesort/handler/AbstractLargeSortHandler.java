@@ -13,12 +13,12 @@ public abstract class AbstractLargeSortHandler implements LargeSortHandler {
 
     /**
      * <p>
-     * This method is intended to be used by the handler methods of each
-     * inherited class of {@code AbstractLargeSortHandler} to forward request to
-     * the its successor handler. The invoker of this method need not to be
-     * concerned about whether its successor exists or not. If the invoker had
-     * not successor, this method simply returns the {@code MetaInfo} object
-     * passed to it.
+     * This method is intended to be used by the handler method of the class
+     * that inherits {@code AbstractLargeSortHandler} to forward request to its
+     * successor's handler. Invoker of this method does not need to be concerned
+     * about whether its successor exists or not. If the invoker had no
+     * successor, this method simply returns the {@code MetaInfo} object passed
+     * to it.
      *
      * <p>
      * Logging is enabled by default. If you want to disable logging, see
@@ -35,12 +35,12 @@ public abstract class AbstractLargeSortHandler implements LargeSortHandler {
 
     /**
      * <p>
-     * This method is intended to be used by the handler methods of each
-     * inherited class of {@code AbstractLargeSortHandler} to forward request to
-     * the its successor handler. The invoker of this method need not to be
-     * concerned about whether its successor exists or not. If the invoker had
-     * not successor, this method simply returns the {@code MetaInfo} object
-     * passed to it.
+     * This method is intended to be used by the handler method of the class
+     * that inherits {@code AbstractLargeSortHandler} to forward request to its
+     * successor's handler. Invoker of this method does not need to be concerned
+     * about whether its successor exists or not. If the invoker had no
+     * successor, this method simply returns the {@code MetaInfo} object passed
+     * to it.
      *
      * @param info
      *            object of class {@code MetaInfo} to be passed on to the
