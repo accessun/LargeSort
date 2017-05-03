@@ -5,6 +5,7 @@ public class MetaInfo {
     private String baseDir; // mandatory
     private String dataFileName; // mandatory, file that contains all the data
     private String splitPrefix;
+    private int splits;
     private String extensionName;
     private String mergeFileName = "F_MERGED.txt";
     private String timestamp; // mandatory after file split operation
@@ -47,6 +48,14 @@ public class MetaInfo {
 
     public void setSplitPrefix(String splitPrefix) {
         this.splitPrefix = splitPrefix;
+    }
+
+    public int getSplits() {
+        return splits;
+    }
+
+    public void setSplits(int splits) {
+        this.splits = splits;
     }
 
     public String getExtensionName() {
