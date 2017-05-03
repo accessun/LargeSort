@@ -1,5 +1,6 @@
 package io.github.accessun.largesort.handler;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -12,19 +13,15 @@ public class DataSorterHandler extends AbstractLargeSortHandler {
 
     private Comparator<Record> comparator;
 
-    private List<String> targetFiles;
+    public DataSorterHandler() {}
 
-    public DataSorterHandler(List<String> targetFiles) {
-        this.targetFiles = targetFiles;
-    }
-
-    public DataSorterHandler(Comparator<Record> comparator, List<String> targetFiles) {
+    public DataSorterHandler(Comparator<Record> comparator) {
         this.comparator = comparator;
-        this.targetFiles = targetFiles;
     }
 
     @Override
     public MetaInfo handle(MetaInfo info) {
+        List<String> targetFiles = listSplitsFiles(info);
         DataSorter sorter = new DataSorter();
         Comparator<Record> com = comparator == null ? new AgeComparator() : comparator;
         try {
@@ -35,6 +32,18 @@ public class DataSorterHandler extends AbstractLargeSortHandler {
             throw new RuntimeException(e);
         }
         return forward(info);
+    }
+
+    private List<String> listSplitsFiles(MetaInfo info) {
+        List<String> fileList = new ArrayList<>();
+        String baseDir = info.getBaseDir();
+        String prefix = info.getSplitPrefix();
+        String ext = info.getExtensionName();
+
+        for (int i = 0; i < info.getSplits(); i++)
+            fileList.add(baseDir + prefix + i + "." + ext);
+
+        return fileList;
     }
 
 }
