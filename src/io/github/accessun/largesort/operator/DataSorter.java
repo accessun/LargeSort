@@ -2,6 +2,7 @@ package io.github.accessun.largesort.operator;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
@@ -79,7 +80,9 @@ public class DataSorter {
 
         List<String> strList = records.stream().map(Record::toString).collect(Collectors.toList());
 
-        // disallow file overwrite
-        Files.write(Paths.get(targetPath), strList, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW);
+        // overwrite when exists
+        OpenOption[] options = { StandardOpenOption.WRITE, StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING };
+        Files.write(Paths.get(targetPath), strList, options);
     }
 }
