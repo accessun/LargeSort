@@ -12,6 +12,7 @@ public class FileSpliterHandler extends AbstractLargeSortHandler {
         try {
             spliter.split(file);
             info.setSplitPrefix(spliter.getPrefix());
+            info.setExtensionName(spliter.getExtension());
             info.setTimestamp(spliter.getTimestamp());
         } catch (Exception e) {
             throw new RuntimeException(e);
