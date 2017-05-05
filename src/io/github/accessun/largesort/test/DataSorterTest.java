@@ -20,5 +20,4 @@ public class DataSorterTest extends OperatorTest {
         handler.handle(info);
     }
 
-
 }

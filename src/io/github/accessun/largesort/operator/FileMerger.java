@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
-import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -70,37 +69,33 @@ public class FileMerger {
              BufferedReader reader2 = Files.newBufferedReader(filePath2);
              BufferedWriter writer = Files.newBufferedWriter(targetPath, writeOption)) {
 
-            String line1 = reader1.readLine(); // assume first read is successful
-            String line2 = reader2.readLine(); // assume first read is successful
-
-            Record record1 = DataMappingUtils.mapToRecord(line1);
-            Record record2 = DataMappingUtils.mapToRecord(line2);
             Comparator<Record> ageComp = new AgeComparator();
 
-            while (true) {
-                if (isEmpty(line1) && nonEmpty(line2)) {
-                    while (Objects.nonNull(line2)) {
-                        writer.write(line2 + "\n");
+            String line1 = reader1.readLine();
+            String line2 = reader2.readLine();
+            String nextLine;
+            Record record1, record2;
+            while (line1 != null || line2 != null) {
+                if (line1 == null) {
+                    nextLine = line2;
+                    line2 = reader2.readLine();
+                }
+                else if (line2 == null) {
+                    nextLine = line1;
+                    line1 = reader1.readLine();
+                }
+                else {
+                    record1 = DataMappingUtils.mapToRecord(line1);
+                    record2 = DataMappingUtils.mapToRecord(line2);
+                    if (ageComp.compare(record1, record2) < 0) {
+                        nextLine = line1;
+                        line1 = reader1.readLine();
+                    } else {
+                        nextLine = line2;
                         line2 = reader2.readLine();
                     }
-                    break;
-                } else if (isEmpty(line2) && nonEmpty(line1)) {
-                    while (Objects.nonNull(line1)) {
-                        writer.write(line1 + "\n");
-                        line1 = reader1.readLine();
-                    }
-                    break;
-                } else if (ageComp.compare(record1, record2) <= 0) {
-                    writer.write(record1 + "\n");
-                    line1 = reader1.readLine();
-                    if (line1 != null)
-                        record1 = DataMappingUtils.mapToRecord(line1);
-                } else {
-                    writer.write(record2 + "\n");
-                    line2 = reader2.readLine();
-                    if (line2 != null)
-                        record2 = DataMappingUtils.mapToRecord(line2);
                 }
+                writer.write(nextLine + "\n");
             }
         }
     }
@@ -120,13 +115,5 @@ public class FileMerger {
             merge(mergeCache, filePaths[i], mergedFile, false);
             mergeCache = mergedFile;
         }
-    }
-
-    private boolean isEmpty(String line) {
-        return Objects.isNull(line) || line.trim().isEmpty();
-    }
-
-    private boolean nonEmpty(String line) {
-        return !isEmpty(line);
     }
 }
